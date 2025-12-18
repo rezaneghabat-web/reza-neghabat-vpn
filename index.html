@@ -6,32 +6,67 @@
     <title>پنل مدیریت Reza Neghabat VPN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background-color: #f8f9fa; }
-        .card { border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1 ); margin-bottom: 20px; }
+        * { font-family: 'Vazirmatn', sans-serif; }
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; border: none; }
         .btn-primary { background-color: #0d6efd; border: none; }
         .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; }
+        .table-responsive { max-height: 400px; overflow-y: auto; }
+        .badge { font-size: 0.85rem; padding: 0.5rem 0.75rem; }
+        .copy-btn { cursor: pointer; }
+        .copy-btn:hover { opacity: 0.7; }
+        .empty-state { text-align: center; padding: 2rem; color: #999; }
+        .stats { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex: 1; text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #667eea; }
+        .stat-label { color: #999; font-size: 0.9rem; margin-top: 0.5rem; }
     </style>
 </head>
 <body>
     <div class="header text-center">
         <h1>پنل مدیریت Reza Neghabat VPN</h1>
-        <p>مدیریت کاربران و کانفیگ‌ها</p>
+        <p>مدیریت کاربران و لینک‌های اشتراک</p>
     </div>
 
     <div class="container">
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">تعداد کاربران</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">کاربران فعال</div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">افزودن کاربر جدید</h5>
+                        <h5 class="card-title"><i class="fas fa-user-plus"></i> افزودن کاربر جدید</h5>
                         <form id="addUserForm">
                             <div class="mb-3">
                                 <label class="form-label">نام کاربر</label>
-                                <input type="text" class="form-control" id="username" required>
+                                <input type="text" class="form-control" id="username" placeholder="مثال: ali" required>
+                                <small class="text-muted">فقط حروف و اعداد و خط تیره</small>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">ساخت کاربر</button>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-plus"></i> ساخت کاربر
+                            </button>
                         </form>
+                        <hr>
+                        <div class="mb-3">
+                            <label class="form-label">راهنمای سریع</label>
+                            <ul class="small" style="color: #666;">
+                                <li>هر کاربر یک لینک اشتراک منحصر به فرد دارد</li>
+                                <li>کاربران می‌توانند این لینک را در کلاینت‌های V2Ray وارد کنند</li>
+                                <li>می‌توانید کاربران را در هر زمان حذف کنید</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -39,49 +74,212 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">لیست کاربران</h5>
+                        <h5 class="card-title"><i class="fas fa-list"></i> لیست کاربران</h5>
                         <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light">
                                     <tr>
-                                        <th>نام</th>
+                                        <th>نام کاربر</th>
                                         <th>لینک اشتراک</th>
                                         <th>وضعیت</th>
                                         <th>عملیات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="usersList">
-                                    <!-- Users will be loaded here -->
+                                    <tr class="empty-state">
+                                        <td colspan="4">هنوز کاربری ایجاد نشده است</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-cog"></i> تنظیمات</h5>
+                        <button class="btn btn-warning btn-sm" id="exportBtn">
+                            <i class="fas fa-download"></i> صادرات داده‌ها
+                        </button>
+                        <button class="btn btn-danger btn-sm" id="clearBtn">
+                            <i class="fas fa-trash"></i> پاک کردن همه
+                        </button>
+                        <button class="btn btn-info btn-sm" id="helpBtn">
+                            <i class="fas fa-question-circle"></i> راهنما
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Help Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">راهنمای استفاده</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>چگونه از این پنل استفاده کنم؟</h6>
+                    <ol>
+                        <li><strong>ایجاد کاربر:</strong> نام کاربر را وارد کنید و روی "ساخت کاربر" کلیک کنید</li>
+                        <li><strong>دریافت لینک:</strong> هر کاربر یک لینک منحصر به فرد دریافت می‌کند</li>
+                        <li><strong>اشتراک گذاری:</strong> لینک را با دوستان یا خانواده به اشتراک بگذارید</li>
+                        <li><strong>حذف کاربر:</strong> روی دکمه حذف کلیک کنید تا لینک آن کاربر غیرفعال شود</li>
+                    </ol>
+                    <h6 class="mt-3">لینک اشتراک کجا استفاده می‌شود؟</h6>
+                    <p>کاربران می‌توانند این لینک را در کلاینت‌های زیر استفاده کنند:</p>
+                    <ul>
+                        <li>V2rayNG (اندروید)</li>
+                        <li>Clash (ویندوز/مک)</li>
+                        <li>Shadowrocket (آیفون)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Simple script to handle UI interactions (backend logic will be handled by GitHub Actions)
-        document.getElementById('addUserForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            addUserToTable(username);
-            document.getElementById('username').value = '';
-            alert('کاربر با موفقیت اضافه شد! (در نسخه نهایی این تغییرات در گیت‌هاب ذخیره می‌شود)');
+        const STORAGE_KEY = 'reza_vpn_users';
+        const BASE_URL = 'https://rezaneghabat-web.github.io/reza-neghabat-vpn';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            setupEventListeners();
         });
 
-        function addUserToTable(username) {
+        function setupEventListeners() {
+            document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('clearBtn').addEventListener('click', clearAllUsers);
+            document.getElementById('helpBtn').addEventListener('click', () => {
+                new bootstrap.Modal(document.getElementById('helpModal')).show();
+            });
+        }
+
+        function handleAddUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                alert('لطفاً نام کاربر را وارد کنید');
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+                alert('نام کاربر فقط می‌تواند شامل حروف، اعداد، خط تیره و زیرخط باشد');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.name === username)) {
+                alert('این نام کاربر قبلاً وجود دارد');
+                return;
+            }
+
+            const newUser = {
+                name: username,
+                created: new Date().toISOString(),
+                active: true
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+            loadUsers();
+            document.getElementById('username').value = '';
+            alert(`کاربر "${username}" با موفقیت ایجاد شد!`);
+        }
+
+        function loadUsers() {
+            const users = getUsers();
             const tbody = document.getElementById('usersList');
-            const tr = document.createElement('tr');
-            const subLink = `https://rezaneghabat-web.github.io/reza-neghabat-vpn/sub/${username}`;
-            tr.innerHTML = `
-                <td>${username}</td>
-                <td><a href="${subLink}" target="_blank" class="btn btn-sm btn-outline-secondary">مشاهده لینک</a></td>
-                <td><span class="badge bg-success">فعال</span></td>
-                <td><button class="btn btn-sm btn-danger">حذف</button></td>
-            `;
-            tbody.appendChild(tr );
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr class="empty-state"><td colspan="4">هنوز کاربری ایجاد نشده است</td></tr>';
+                updateStats(0, 0);
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const subLink = `${BASE_URL}/sub/${user.name}`;
+                return `
+                    <tr>
+                        <td><strong>${user.name}</strong></td>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" value="${subLink}" readonly>
+                                <button class="btn btn-outline-secondary copy-btn" onclick="copyToClipboard('${subLink}')" title="کپی">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-success">فعال</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.name}')">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateStats(users.length, users.filter(u => u.active).length);
+        }
+
+        function deleteUser(username) {
+            if (confirm(`آیا مطمئن هستید که می‌خواهید کاربر "${username}" را حذف کنید؟`)) {
+                let users = getUsers();
+                users = users.filter(u => u.name !== username);
+                saveUsers(users);
+                loadUsers();
+                alert(`کاربر "${username}" حذف شد`);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('لینک کپی شد!');
+            });
+        }
+
+        function updateStats(total, active) {
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+        }
+
+        function exportData() {
+            const users = getUsers();
+            const data = JSON.stringify(users, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reza-vpn-users-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            alert('داده‌ها صادر شدند');
+        }
+
+        function clearAllUsers() {
+            if (confirm('آیا مطمئن هستید؟ این عمل تمام کاربران را حذف می‌کند')) {
+                if (confirm('این عمل برگشت‌پذیر نیست. آیا می‌خواهید ادامه دهید؟')) {
+                    saveUsers([]);
+                    loadUsers();
+                    alert('تمام کاربران حذف شدند');
+                }
+            }
+        }
+
+        function getUsers() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
         }
     </script>
 </body>
