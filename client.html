@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دریافت لینک اشتراک - Reza Neghabat VPN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Vazirmatn', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 500px; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { color: #667eea; font-weight: bold; }
+        .header p { color: #999; }
+        .input-group { margin-bottom: 1rem; }
+        .btn-primary { background-color: #667eea; border: none; }
+        .btn-primary:hover { background-color: #764ba2; }
+        .error { color: #dc3545; display: none; margin-bottom: 1rem; }
+        .success { color: #28a745; display: none; margin-bottom: 1rem; }
+        .subscription-link { background: #f8f9fa; padding: 1rem; border-radius: 10px; border: 2px solid #667eea; margin-top: 1rem; display: none; }
+        .subscription-link input { background: white; border: 1px solid #ddd; }
+        .loading { display: none; text-align: center; }
+        .spinner { display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-shield-alt"></i> Reza Neghabat VPN</h1>
+            <p>دریافت لینک اشتراک شخصی‌تان</p>
+        </div>
+
+        <div id="error" class="alert alert-danger error" role="alert"></div>
+        <div id="success" class="alert alert-success success" role="alert"></div>
+
+        <div id="loading" class="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">در حال بارگذاری...</span>
+            </div>
+            <p class="mt-2">در حال بارگذاری...</p>
+        </div>
+
+        <div id="content">
+            <form id="getSubscriptionForm">
+                <div class="input-group">
+                    <label class="form-label">نام کاربری شما</label>
+                    <input type="text" class="form-control" id="username" placeholder="نام کاربری را وارد کنید" required>
+                    <small class="text-muted">نام کاربری را از مدیریت سیستم دریافت کنید</small>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-key"></i> دریافت لینک اشتراک
+                </button>
+            </form>
+
+            <div id="subscriptionLink" class="subscription-link">
+                <label class="form-label">لینک اشتراک شما:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="linkInput" readonly>
+                    <button class="btn btn-outline-primary" type="button" onclick="copyLink()">
+                        <i class="fas fa-copy"></i> کپی
+                    </button>
+                </div>
+                <div class="mt-3">
+                    <p class="small text-muted"><strong>نحوه استفاده:</strong></p>
+                    <ol class="small" style="color: #666;">
+                        <li>لینک بالا را کپی کنید</li>
+                        <li>یکی از کلاینت‌های زیر را نصب کنید</li>
+                        <li>لینک را در کلاینت وارد کنید</li>
+                        <li>اتصال برقرار کنید</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-light rounded">
+                <h6><i class="fas fa-download"></i> کلاینت‌های پیشنهادی:</h6>
+                <ul class="small mb-0" style="color: #666;">
+                    <li><strong>اندروید:</strong> V2rayNG</li>
+                    <li><strong>ویندوز:</strong> Clash for Windows</li>
+                    <li><strong>آیفون:</strong> Shadowrocket</li>
+                    <li><strong>مک:</strong> ClashX</li>
+                </ul>
+            </div>
+
+            <div class="mt-3 p-3 bg-warning bg-opacity-10 rounded">
+                <small style="color: #856404;">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>نکته:</strong> این لینک شخصی و محرمانه است. آن را با دیگران به اشتراک نگذارید.
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const BASE_URL = 'https://rezaneghabat-web.github.io/reza-neghabat-vpn';
+        const ADMIN_URL = `${BASE_URL}/`;
+
+        document.getElementById('getSubscriptionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                showError('لطفاً نام کاربری را وارد کنید');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                // Fetch admin page to check if user exists
+                const response = await fetch(ADMIN_URL);
+                const html = await response.text();
+                
+                // For now, we'll generate the link directly
+                // In a real scenario, this would check against a database
+                const subscriptionLink = `${BASE_URL}/sub/${username}`;
+                
+                document.getElementById('linkInput').value = subscriptionLink;
+                document.getElementById('subscriptionLink').style.display = 'block';
+                showSuccess(`لینک اشتراک برای "${username}" آماده است!`);
+                
+            } catch (error) {
+                showError('خطا در دریافت لینک. لطفاً دوباره تلاش کنید.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        function copyLink() {
+            const link = document.getElementById('linkInput').value;
+            navigator.clipboard.writeText(link).then(() => {
+                showSuccess('لینک کپی شد!');
+            }).catch(() => {
+                showError('خطا در کپی کردن');
+            });
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('content').style.display = show ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>
