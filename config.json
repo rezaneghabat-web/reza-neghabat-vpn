@@ -1,0 +1,40 @@
+{
+  "vpnName": "Reza Neghabat VPN",
+  "description": "فیلترشکن رایگان و سریع",
+  "subscriptionSources": [
+    {
+      "name": "Barry Far V2Ray",
+      "url": "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Merge_base64.txt",
+      "updateInterval": 720
+    }
+  ],
+  "supportedClients": [
+    {
+      "name": "V2rayNG",
+      "platform": "Android",
+      "downloadUrl": "https://play.google.com/store/apps/details?id=com.v2ray.ang"
+    },
+    {
+      "name": "Clash for Windows",
+      "platform": "Windows",
+      "downloadUrl": "https://github.com/Fndroid/clash_for_windows_pkg/releases"
+    },
+    {
+      "name": "Shadowrocket",
+      "platform": "iOS",
+      "downloadUrl": "https://apps.apple.com/app/shadowrocket/id932747118"
+    },
+    {
+      "name": "ClashX",
+      "platform": "macOS",
+      "downloadUrl": "https://github.com/yichengchen/clashX/releases"
+    }
+  ],
+  "features": [
+    "رایگان و بدون محدودیت",
+    "سرعت بالا",
+    "آپدیت خودکار",
+    "مدیریت آسان کاربران",
+    "لینک‌های منحصر به فرد برای هر کاربر"
+  ]
+}
