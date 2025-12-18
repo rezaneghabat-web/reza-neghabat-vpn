@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت Reza Neghabat VPN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #f8f9fa; }
+        .card { border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1 ); margin-bottom: 20px; }
+        .btn-primary { background-color: #0d6efd; border: none; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <h1>پنل مدیریت Reza Neghabat VPN</h1>
+        <p>مدیریت کاربران و کانفیگ‌ها</p>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">افزودن کاربر جدید</h5>
+                        <form id="addUserForm">
+                            <div class="mb-3">
+                                <label class="form-label">نام کاربر</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">ساخت کاربر</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">لیست کاربران</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>نام</th>
+                                        <th>لینک اشتراک</th>
+                                        <th>وضعیت</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersList">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to handle UI interactions (backend logic will be handled by GitHub Actions)
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            addUserToTable(username);
+            document.getElementById('username').value = '';
+            alert('کاربر با موفقیت اضافه شد! (در نسخه نهایی این تغییرات در گیت‌هاب ذخیره می‌شود)');
+        });
+
+        function addUserToTable(username) {
+            const tbody = document.getElementById('usersList');
+            const tr = document.createElement('tr');
+            const subLink = `https://rezaneghabat-web.github.io/reza-neghabat-vpn/sub/${username}`;
+            tr.innerHTML = `
+                <td>${username}</td>
+                <td><a href="${subLink}" target="_blank" class="btn btn-sm btn-outline-secondary">مشاهده لینک</a></td>
+                <td><span class="badge bg-success">فعال</span></td>
+                <td><button class="btn btn-sm btn-danger">حذف</button></td>
+            `;
+            tbody.appendChild(tr );
+        }
+    </script>
+</body>
+</html>
